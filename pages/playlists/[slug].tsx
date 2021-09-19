@@ -40,16 +40,18 @@ interface Props {
   playlist: {
     _id: string
     name: string
-    trackCount: number
-    commentCount: number
-    curators: {
-      person: {
-        firstName: string
-        lastName: string
-      }
-    }[]
-    mosaic: MosaicEntry[]
-    entries: (Track | Comment)[]
+    trackCount: number | null
+    commentCount: number | null
+    curators:
+      | {
+          person: {
+            firstName: string
+            lastName: string
+          }
+        }[]
+      | null
+    mosaic: MosaicEntry[] | null
+    entries: (Track | Comment)[] | null
   }
 }
 
@@ -68,7 +70,7 @@ const CommentContainer = styled('div', {
   color: '#fff',
 })
 
-const Track: React.FC<Track> = ({ name, artists, album }) => (
+const TrackComponent: React.FC<Track> = ({ name, artists, album }) => (
   <Stack
     as='article'
     direction='inline'
@@ -91,7 +93,7 @@ const Track: React.FC<Track> = ({ name, artists, album }) => (
   </Stack>
 )
 
-const Comment: React.FC<Comment> = ({ comment, curator }) => (
+const CommentComponent: React.FC<Comment> = ({ comment, curator }) => (
   <CommentContainer as='figure'>
     <blockquote>{comment}</blockquote>
     <figcaption>
@@ -99,11 +101,6 @@ const Comment: React.FC<Comment> = ({ comment, curator }) => (
     </figcaption>
   </CommentContainer>
 )
-
-const EntryComponentsByType: Record<string, React.FC> = {
-  track: Track,
-  comment: Comment,
-}
 
 const Page: NextPage<Props> = ({ playlist }) => {
   if (!playlist) {
@@ -117,21 +114,25 @@ const Page: NextPage<Props> = ({ playlist }) => {
         <dl>
           <dt>Curators</dt>
           <dd>
-            {playlist.curators
+            {(playlist.curators ?? [])
               .map(({ person }) =>
                 [person.firstName, person.lastName].join(' '),
               )
               .join(', ')}
           </dd>
           <dt>Tracks</dt>
-          <dd>{playlist.trackCount}</dd>
+          <dd>{playlist.trackCount ?? 0}</dd>
           <dt>Comments</dt>
-          <dd>{playlist.commentCount}</dd>
+          <dd>{playlist.commentCount ?? 0}</dd>
         </dl>
         <Stack>
-          {playlist.entries.map((track, index) => {
-            const Component = EntryComponentsByType[track._type]
-            return <Component key={index} {...track} />
+          {(playlist.entries ?? []).map((entry, index) => {
+            switch (entry._type) {
+              case 'track':
+                return <TrackComponent key={index} {...entry} />
+              case 'comment':
+                return <CommentComponent key={index} {...entry} />
+            }
           })}
         </Stack>
       </Stack>
