@@ -189,7 +189,7 @@ export const getStaticProps: GetStaticProps<Props> = async request => {
     }
   `,
     {
-      slug: request.params.slug,
+      slug: request.params?.slug,
     },
   )
 
