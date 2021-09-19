@@ -49,7 +49,7 @@ interface Props {
       }
     }[]
     mosaic: MosaicEntry[]
-    tracks: (Track | Comment)[]
+    entries: (Track | Comment)[]
   }
 }
 
@@ -129,7 +129,7 @@ const Page: NextPage<Props> = ({ playlist }) => {
           <dd>{playlist.commentCount}</dd>
         </dl>
         <Stack>
-          {playlist.tracks.map((track, index) => {
+          {playlist.entries.map((track, index) => {
             const Component = EntryComponentsByType[track._type]
             return <Component key={index} {...track} />
           })}
@@ -147,15 +147,15 @@ export const getStaticProps: GetStaticProps<Props> = async request => {
     *[_type == 'playlist' && slug.current == $slug][0]{
       _id,
       name,
-      'trackCount': count(tracks[_type == 'track']),
-      'commentCount': count(tracks[_type == 'comment']),
+      'trackCount': count(entries[_type == 'track']),
+      'commentCount': count(entries[_type == 'comment']),
       curators[]->{
         person{
           firstName,
           lastName
         }
       },
-      'mosaic': tracks[_type == 'track'][0..3]{
+      'mosaic': entries[_type == 'track'][0..3]{
         _type,
         _type == 'track' => @->{
           'albumName': album->name,
@@ -163,7 +163,7 @@ export const getStaticProps: GetStaticProps<Props> = async request => {
           'imageUrl': album->appleMusicImageUrl
         }
       },
-      tracks[]{
+      entries[]{
         _type,
         _type == 'track' => @->{
           name,
@@ -203,7 +203,7 @@ export const getStaticProps: GetStaticProps<Props> = async request => {
     props: {
       playlist,
     },
-    revalidate: 60
+    revalidate: 60,
   }
 }
 
