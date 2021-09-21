@@ -113,12 +113,10 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
       },
       // Get the album art of the first four tracks. Is there a way to find
       // the first four tracks with unique albums?
-      'mosaic': entries[_type == 'track'][0..3]{
-        _type == 'track' => @->{
-          'albumName': album->name,
-          'color': album->image.asset->metadata.palette.dominant.background,
-          'imageUrl': album->appleMusicImageUrl
-        },
+      'mosaic': entries[_type == 'track'][0..3]->{
+        'albumName': album->name,
+        'color': album->image.asset->metadata.palette.dominant.background,
+        'imageUrl': album->appleMusicImageUrl
       }
     }
   `)

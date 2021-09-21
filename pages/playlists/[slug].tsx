@@ -156,13 +156,10 @@ export const getStaticProps: GetStaticProps<Props> = async request => {
           lastName
         }
       },
-      'mosaic': entries[_type == 'track'][0..3]{
-        _type,
-        _type == 'track' => @->{
-          'albumName': album->name,
-          'color': album->image.asset->metadata.palette.dominant.background,
-          'imageUrl': album->appleMusicImageUrl
-        }
+      'mosaic': entries[_type == 'track'][0..3]->{
+        'albumName': album->name,
+        'color': album->image.asset->metadata.palette.dominant.background,
+        'imageUrl': album->appleMusicImageUrl
       },
       entries[]{
         _type,
